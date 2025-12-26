@@ -49,11 +49,11 @@ themeToggle.addEventListener('click', toggleTheme);
 input.addEventListener("input", () => {
     const text = input.value;
     currentText = text;
-    
+
     // Update character count (excluding whitespace)
     const cleanText = text.replace(/\s/g, "");
     charCountDisplay.textContent = cleanText.length;
-    
+
     updatePreview(text);
     loadCharacters(text);
 });
@@ -165,7 +165,7 @@ function resetCanvas() {
 // ============ SVG GENERATION ============
 function createSVG(text) {
     const lines = text.split("\n").filter(line => line.trim());
-    
+
     const charWidth = 150;
     const spaceWidth = 40;
     const lineHeight = 200;
@@ -330,7 +330,7 @@ function generateFilename(text, format) {
         .replace(/\n/g, "_")
         .replace(/\s+/g, "_")
         .substring(0, 30);
-    
+
     const timestamp = new Date().toISOString().slice(0, 10);
     return `calligraphy_${cleanText}_${timestamp}.${format}`;
 }
@@ -367,7 +367,7 @@ document.addEventListener("keydown", (e) => {
         e.preventDefault();
         animateCharacters();
     }
-    
+
     // Escape to reset
     if (e.key === "Escape") {
         resetCanvas();
@@ -377,12 +377,12 @@ document.addEventListener("keydown", (e) => {
 // ============ INITIALIZATION ============
 document.addEventListener("DOMContentLoaded", () => {
     console.log("Chinese Calligraphy Studio initialized");
-    
+
     initializeTheme();
-    
+
     // Set example text
     input.value = "春眠不覺曉\n處處聞啼鳥\n夜來風雨聲\n花落知多少";
-    
+
     // Trigger initial load
     const event = new Event("input", { bubbles: true });
     input.dispatchEvent(event);

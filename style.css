@@ -12,19 +12,19 @@
     --accent-gold: #d4af37;
     --success: #10b981;
     --warning: #f59e0b;
-    
+
     /* Neutral Colors */
     --bg-light: #ffffff;
     --bg-gray-1: #f9fafb;
     --bg-gray-2: #f3f4f6;
     --bg-gray-3: #e5e7eb;
-    
+
     --text-dark: #1f2937;
     --text-gray: #6b7280;
     --text-light: #9ca3af;
-    
+
     --border: #d1d5db;
-    
+
     /* Dark Mode */
     --dark-bg-primary: #111827;
     --dark-bg-secondary: #1f2937;
@@ -32,13 +32,13 @@
     --dark-text-primary: #f9fafb;
     --dark-text-secondary: #d1d5db;
     --dark-border: #4b5563;
-    
+
     /* Shadows */
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-    
+
     /* Transitions */
     --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -49,7 +49,8 @@
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -146,11 +147,21 @@ body.dark-mode {
     stroke-width: 2;
 }
 
-.sun-icon { display: block; }
-.moon-icon { display: none; }
+.sun-icon {
+    display: block;
+}
 
-body.dark-mode .sun-icon { display: none; }
-body.dark-mode .moon-icon { display: block; }
+.moon-icon {
+    display: none;
+}
+
+body.dark-mode .sun-icon {
+    display: none;
+}
+
+body.dark-mode .moon-icon {
+    display: block;
+}
 
 /* ============ MAIN LAYOUT ============ */
 .main-container {
@@ -665,6 +676,7 @@ body.dark-mode .canvas-footer {
         transform: translateX(420px);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -676,6 +688,7 @@ body.dark-mode .canvas-footer {
         transform: translateX(0);
         opacity: 1;
     }
+
     to {
         transform: translateX(420px);
         opacity: 0;
@@ -687,19 +700,19 @@ body.dark-mode .canvas-footer {
     .main-container {
         grid-template-columns: 320px 1fr;
     }
-    
+
     .sidebar {
         padding: 20px;
     }
-    
+
     .canvas-header {
         padding: 20px 24px;
     }
-    
+
     .canvas-content {
         padding: 20px 24px;
     }
-    
+
     .character-grid {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
         gap: 12px;
@@ -707,88 +720,315 @@ body.dark-mode .canvas-footer {
 }
 
 @media (max-width: 768px) {
+    /* Header adjustments */
     .app-header {
-        padding: 16px;
+        padding: 14px 16px;
+        flex-shrink: 0;
     }
-    
+
     .header-content {
-        gap: 12px;
+        gap: 10px;
+        flex-wrap: wrap;
     }
-    
+
     .header-info h1 {
         font-size: 18px;
     }
-    
+
     .header-info p {
-        font-size: 12px;
+        font-size: 11px;
+        display: none;
     }
-    
+
     .logo {
-        width: 48px;
-        height: 48px;
-        font-size: 32px;
+        width: 44px;
+        height: 44px;
+        font-size: 28px;
+        flex-shrink: 0;
     }
-    
+
+    /* Main layout - stack vertically */
     .main-container {
         grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr;
+        grid-template-rows: auto 1fr;
+        height: calc(100vh - 70px);
     }
-    
+
+    /* Sidebar as tab-like scrollable panel */
     .sidebar {
         border-right: none;
         border-bottom: 1px solid var(--border);
-        max-height: 50%;
+        max-height: 45vh;
+        padding: 16px;
+        gap: 16px;
+        flex-shrink: 0;
+    }
+
+    /* Canvas takes remaining space */
+    .canvas-area {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 55vh;
+    }
+
+    .canvas-content {
+        flex: 1;
+        padding: 16px;
         overflow-y: auto;
     }
-    
-    .canvas-area {
-        max-height: 50%;
+
+    .canvas-header {
+        padding: 16px;
+        flex-shrink: 0;
     }
-    
+
+    .canvas-footer {
+        padding: 12px 16px;
+        flex-shrink: 0;
+        font-size: 11px;
+    }
+
+    /* Character grid sizing */
     .character-grid {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+        gap: 10px;
     }
-    
+
+    /* Preview adjustments */
     .preview-box {
         font-size: 1.6rem;
-        min-height: 120px;
+        min-height: 100px;
+        padding: 16px;
+    }
+
+    /* Input textarea */
+    .input-textarea {
+        min-height: 100px;
+        max-height: 120px;
+        font-size: 13px;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+
+    /* Control sections */
+    .control-section {
+        gap: 10px;
+    }
+
+    /* Hide description text to save space */
+    .section-title {
+        font-size: 12px;
+    }
+
+    /* Notifications positioning */
+    .notification-container {
+        top: 75px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
     }
 }
 
 @media (max-width: 480px) {
+    /* Header */
     .app-header {
-        padding: 12px;
+        padding: 10px 12px;
     }
-    
+
     .header-left {
-        gap: 8px;
+        gap: 6px;
+        flex: 1;
     }
-    
+
     .header-info h1 {
-        font-size: 16px;
+        font-size: 14px;
+        font-weight: 600;
     }
-    
+
+    .header-info p {
+        display: none;
+    }
+
+    .logo {
+        width: 40px;
+        height: 40px;
+        font-size: 24px;
+    }
+
+    .theme-toggle {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+    }
+
+    /* Layout spacing */
+    .main-container {
+        height: calc(100vh - 60px);
+        grid-template-rows: auto 1fr;
+    }
+
+    /* Sidebar */
     .sidebar {
-        padding: 16px;
-        gap: 16px;
+        max-height: 40vh;
+        padding: 12px;
+        gap: 12px;
+        border-bottom: 1.5px solid var(--border);
     }
-    
-    .canvas-content {
-        padding: 16px;
+
+    .canvas-area {
+        min-height: 60vh;
     }
-    
+
     .canvas-header {
-        padding: 16px;
+        padding: 12px;
+        border-bottom: 1.5px solid var(--border);
     }
-    
+
+    .canvas-header h2 {
+        font-size: 16px;
+        margin-bottom: 2px;
+    }
+
+    .subtitle {
+        font-size: 11px;
+        display: none;
+    }
+
+    .canvas-content {
+        padding: 12px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .canvas-footer {
+        padding: 10px 12px;
+        font-size: 10px;
+    }
+
+    /* Character grid */
     .character-grid {
+        grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
         gap: 8px;
-        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        min-height: 200px;
     }
-    
+
+    .character-item {
+        padding: 6px;
+        border-radius: 8px;
+    }
+
+    /* Preview */
     .preview-box {
-        font-size: 1.4rem;
-        padding: 16px;
-        min-height: 100px;
+        font-size: 1.3rem;
+        min-height: 80px;
+        padding: 12px;
+        border-radius: 8px;
+    }
+
+    .preview-box.empty {
+        font-size: 12px;
+    }
+
+    /* Input areas */
+    .input-textarea {
+        min-height: 90px;
+        max-height: 110px;
+        padding: 10px 12px;
+        font-size: 12px;
+        border-radius: 6px;
+    }
+
+    .input-label {
+        font-size: 12px;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 9px 10px;
+        font-size: 11px;
+        border-radius: 6px;
+    }
+
+    .btn-icon {
+        font-size: 12px;
+    }
+
+    .export-group {
+        gap: 8px;
+    }
+
+    /* Sections */
+    .control-section {
+        gap: 8px;
+    }
+
+    .section-title {
+        font-size: 11px;
+        margin-bottom: 4px;
+    }
+
+    /* Info section */
+    .info-section {
+        margin-top: auto;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+        display: none;
+    }
+
+    /* Notifications */
+    .notification-container {
+        top: 65px;
+        right: 8px;
+        left: 8px;
+        max-width: none;
+    }
+
+    .notification {
+        padding: 10px 12px;
+        font-size: 12px;
+        border-radius: 6px;
+    }
+
+    /* Select dropdown */
+    .resolution-select {
+        padding: 6px 10px;
+        font-size: 12px;
+        border-radius: 6px;
+    }
+
+    .small-label {
+        font-size: 11px;
+    }
+
+    /* Character count */
+    .input-meta {
+        font-size: 11px;
+    }
+
+    /* Tips list */
+    .tips-list {
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .tips-list li {
+        margin-bottom: 6px;
+    }
+
+    .info-title {
+        font-size: 11px;
+    }
+
+    /* Prevent overflow */
+    html,
+    body {
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 }
