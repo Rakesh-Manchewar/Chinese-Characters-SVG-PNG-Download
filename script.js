@@ -1,424 +1,389 @@
-// State management
-const state = {
-    text: '',
-    fontFamily: 'SimSun, 宋体',
-    fontSize: 48,
-    textColor: '#000000',
-    bgColor: '#ffffff',
-    isBold: false,
-    isItalic: false,
-    isUnderline: false,
-    textAlign: 'center',
-    resolution: '3840x2160',
-    customWidth: 1920,
-    customHeight: 1080,
-    theme: 'light'
-};
+// ============================================
+// CHINESE CALLIGRAPHY STUDIO
+// Optimized & Professional Version
+// ============================================
 
 // DOM Elements
-const elements = {
-    textInput: document.getElementById('textInput'),
-    fontFamily: document.getElementById('fontFamily'),
-    fontSize: document.getElementById('fontSize'),
-    textColor: document.getElementById('textColor'),
-    bgColor: document.getElementById('bgColor'),
-    boldBtn: document.getElementById('boldBtn'),
-    italicBtn: document.getElementById('italicBtn'),
-    underlineBtn: document.getElementById('underlineBtn'),
-    textAlign: document.getElementById('textAlign'),
-    resolution: document.getElementById('resolution'),
-    customWidth: document.getElementById('customWidth'),
-    customHeight: document.getElementById('customHeight'),
-    customDimensions: document.getElementById('customDimensions'),
-    preview: document.getElementById('preview'),
-    downloadSVG: document.getElementById('downloadSVG'),
-    downloadPNG: document.getElementById('downloadPNG'),
-    themeToggle: document.getElementById('themeToggle'),
-    notification: document.getElementById('notification')
-};
+const input = document.getElementById("userInput");
+const result = document.getElementById("result");
+const targetDiv = document.getElementById("character-target-div");
+const charCountDisplay = document.getElementById("charCount");
+const pngResolutionSelect = document.getElementById("pngResolution");
+const notificationContainer = document.getElementById("notificationContainer");
+const themeToggle = document.getElementById("themeToggle");
 
-// Initialize
-function init() {
-    loadTheme();
-    attachEventListeners();
-    updatePreview();
+// State
+let writers = [];
+let currentText = "";
+let isDarkMode = false;
+
+// Configuration
+const DISPLAY_FONT = "'SimSun', 'STKaiti', 'KaiTi', serif";
+const STROKE_COLOR = "#1f2937";
+const OUTLINE_COLOR = "#d1d5db";
+
+// ============ THEME MANAGEMENT ============
+function initializeTheme() {
+    const savedTheme = localStorage.getItem('calligraphy-theme') || 'light';
+    isDarkMode = savedTheme === 'dark';
+    applyTheme();
 }
 
-// Load theme from memory
-function loadTheme() {
-    const savedTheme = state.theme;
-    if (savedTheme === 'dark') {
-        document.body.setAttribute('data-theme', 'dark');
-        elements.themeToggle.querySelector('.icon').textContent = '☀️';
-        state.theme = 'dark';
-    }
-}
-
-// Save theme to memory
-function saveTheme() {
-    // Theme is already saved in state object
-}
-
-// Attach event listeners
-function attachEventListeners() {
-    elements.textInput.addEventListener('input', (e) => {
-        state.text = e.target.value;
-        updatePreview();
-    });
-
-    elements.fontFamily.addEventListener('change', (e) => {
-        state.fontFamily = e.target.value;
-        updatePreview();
-    });
-
-    elements.fontSize.addEventListener('input', (e) => {
-        state.fontSize = parseInt(e.target.value) || 48;
-        updatePreview();
-    });
-
-    elements.textColor.addEventListener('input', (e) => {
-        state.textColor = e.target.value;
-        updatePreview();
-    });
-
-    elements.bgColor.addEventListener('input', (e) => {
-        state.bgColor = e.target.value;
-        updatePreview();
-    });
-
-    elements.boldBtn.addEventListener('click', () => {
-        state.isBold = !state.isBold;
-        elements.boldBtn.classList.toggle('active');
-        updatePreview();
-    });
-
-    elements.italicBtn.addEventListener('click', () => {
-        state.isItalic = !state.isItalic;
-        elements.italicBtn.classList.toggle('active');
-        updatePreview();
-    });
-
-    elements.underlineBtn.addEventListener('click', () => {
-        state.isUnderline = !state.isUnderline;
-        elements.underlineBtn.classList.toggle('active');
-        updatePreview();
-    });
-
-    elements.textAlign.addEventListener('change', (e) => {
-        state.textAlign = e.target.value;
-        updatePreview();
-    });
-
-    elements.resolution.addEventListener('change', (e) => {
-        state.resolution = e.target.value;
-        if (e.target.value === 'custom') {
-            elements.customDimensions.style.display = 'grid';
-        } else {
-            elements.customDimensions.style.display = 'none';
-        }
-    });
-
-    elements.customWidth.addEventListener('input', (e) => {
-        state.customWidth = parseInt(e.target.value) || 1920;
-    });
-
-    elements.customHeight.addEventListener('input', (e) => {
-        state.customHeight = parseInt(e.target.value) || 1080;
-    });
-
-    elements.downloadSVG.addEventListener('click', downloadSVG);
-    elements.downloadPNG.addEventListener('click', downloadPNG);
-    elements.themeToggle.addEventListener('click', toggleTheme);
-}
-
-// Toggle theme
-function toggleTheme() {
-    const currentTheme = document.body.getAttribute('data-theme');
-    if (currentTheme === 'dark') {
-        document.body.removeAttribute('data-theme');
-        elements.themeToggle.querySelector('.icon').textContent = '🌙';
-        state.theme = 'light';
+function applyTheme() {
+    if (isDarkMode) {
+        document.body.classList.add('dark-mode');
     } else {
-        document.body.setAttribute('data-theme', 'dark');
-        elements.themeToggle.querySelector('.icon').textContent = '☀️';
-        state.theme = 'dark';
+        document.body.classList.remove('dark-mode');
     }
-    saveTheme();
 }
 
-// Update preview
-function updatePreview() {
-    const { text, fontFamily, fontSize, textColor, bgColor, isBold, isItalic, isUnderline, textAlign } = state;
+function toggleTheme() {
+    isDarkMode = !isDarkMode;
+    localStorage.setItem('calligraphy-theme', isDarkMode ? 'dark' : 'light');
+    applyTheme();
+}
 
+themeToggle.addEventListener('click', toggleTheme);
+
+// ============ INPUT EVENT HANDLING ============
+input.addEventListener("input", () => {
+    const text = input.value;
+    currentText = text;
+
+    // Update character count (excluding whitespace)
+    const cleanText = text.replace(/\s/g, "");
+    charCountDisplay.textContent = cleanText.length;
+
+    updatePreview(text);
+    loadCharacters(text);
+});
+
+// ============ PREVIEW UPDATE ============
+function updatePreview(text) {
     if (!text.trim()) {
-        elements.preview.innerHTML = '';
+        result.textContent = "Enter text to begin";
+        result.classList.add("empty");
+    } else {
+        result.textContent = text;
+        result.classList.remove("empty");
+    }
+}
+
+// ============ CHARACTER LOADING ============
+function loadCharacters(text) {
+    targetDiv.innerHTML = "";
+    writers = [];
+
+    if (!text.trim()) return;
+
+    const lines = text.split("\n");
+
+    lines.forEach((line, lineIndex) => {
+        line.split("").forEach((char, charIndex) => {
+            // Skip spaces
+            if (char === ' ') {
+                const spacer = document.createElement("div");
+                spacer.style.width = "140px";
+                targetDiv.appendChild(spacer);
+                return;
+            }
+
+            // Skip other whitespace
+            if (/\s/.test(char)) {
+                return;
+            }
+
+            const uniqueId = `char-${lineIndex}-${charIndex}`;
+            const charContainer = document.createElement("div");
+            charContainer.id = uniqueId;
+            charContainer.className = "character-item";
+            targetDiv.appendChild(charContainer);
+
+            try {
+                const writer = HanziWriter.create(uniqueId, char, {
+                    width: 140,
+                    height: 140,
+                    padding: 10,
+                    strokeColor: STROKE_COLOR,
+                    radicalColor: "#2563eb",
+                    outlineColor: OUTLINE_COLOR,
+                    showOutline: true,
+                    showCharacter: false,
+                    strokeAnimationSpeed: 1,
+                    delayBetweenStrokes: 100,
+                    font: "SimSun"
+                });
+
+                writers.push({
+                    writer: writer,
+                    char: char,
+                    line: lineIndex,
+                    position: charIndex
+                });
+            } catch (error) {
+                console.error(`Error loading character: ${char}`, error);
+                charContainer.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#ef4444;font-size:11px;text-align:center;">Unable to load</div>`;
+            }
+        });
+    });
+}
+
+// ============ ANIMATION CONTROL ============
+async function animateCharacters() {
+    if (writers.length === 0) {
+        showNotification("Please enter Chinese characters first", "warning");
         return;
     }
 
-    const fontWeight = isBold ? 'bold' : 'normal';
-    const fontStyle = isItalic ? 'italic' : 'normal';
-    const textDecoration = isUnderline ? 'underline' : 'none';
+    input.disabled = true;
 
-    // Scale down font size for preview (preview is much smaller than actual export)
-    const previewFontSize = Math.min(fontSize * 0.5, 32);
-
-    elements.preview.innerHTML = `
-        <div style="
-            font-family: ${fontFamily};
-            font-size: ${previewFontSize}px;
-            color: ${textColor};
-            background-color: ${bgColor};
-            font-weight: ${fontWeight};
-            font-style: ${fontStyle};
-            text-decoration: ${textDecoration};
-            text-align: ${textAlign};
-            padding: 20px;
-            border-radius: 8px;
-            word-wrap: break-word;
-            white-space: pre-wrap;
-            max-width: 100%;
-            width: 100%;
-            box-sizing: border-box;
-        ">${escapeHtml(text)}</div>
-    `;
+    try {
+        for (let writerObj of writers) {
+            await new Promise((resolve) => {
+                writerObj.writer.animateCharacter({
+                    onComplete: resolve
+                });
+            });
+        }
+        showNotification("✓ Animation complete!", "success");
+    } catch (error) {
+        console.error("Animation error:", error);
+        showNotification("Animation error occurred", "error");
+    } finally {
+        input.disabled = false;
+    }
 }
 
-// Escape HTML
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+// ============ RESET CANVAS ============
+function resetCanvas() {
+    writers.forEach(writerObj => {
+        writerObj.writer.hideCharacter();
+    });
+    showNotification("Canvas reset", "info");
 }
 
-// Show notification
-function showNotification(message, type = 'success') {
-    elements.notification.textContent = message;
-    elements.notification.className = `notification ${type}`;
-    elements.notification.classList.add('show');
+// ============ SVG GENERATION ============
+function createSVG(text) {
+    const lines = text.split("\n").filter(line => line.trim());
+
+    const charWidth = 150;
+    const spaceWidth = 40;
+    const lineHeight = 200;
+    const padding = 30;
+
+    // Calculate dimensions
+    let maxLineWidth = padding * 2;
+    lines.forEach(line => {
+        let lineWidth = padding * 2;
+        line.split("").forEach(char => {
+            lineWidth += (char === ' ') ? spaceWidth : charWidth;
+        });
+        maxLineWidth = Math.max(maxLineWidth, lineWidth);
+    });
+
+    const totalWidth = maxLineWidth;
+    const totalHeight = lines.length * lineHeight + padding * 2;
+
+    // Generate SVG
+    let textElements = "";
+    let yPosition = padding + 110;
+
+    lines.forEach((line) => {
+        let xPosition = padding;
+        const chars = line.split("");
+
+        chars.forEach((char) => {
+            if (char === ' ') {
+                xPosition += spaceWidth;
+                return;
+            }
+
+            textElements += `
+                <text 
+                    x="${xPosition + charWidth / 2}" 
+                    y="${yPosition}"
+                    font-family="${DISPLAY_FONT}"
+                    font-size="130"
+                    font-weight="400"
+                    text-anchor="middle"
+                    dominant-baseline="central"
+                    fill="${STROKE_COLOR}"
+                    letter-spacing="2">${escapeXml(char)}</text>
+            `;
+            xPosition += charWidth;
+        });
+
+        yPosition += lineHeight;
+    });
+
+    const bgColor = isDarkMode ? "#1f2937" : "#ffffff";
+    const accentColor = isDarkMode ? "#374151" : "#f9fafb";
+
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${totalHeight}" viewBox="0 0 ${totalWidth} ${totalHeight}">
+        <defs>
+            <linearGradient id="bgGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:${bgColor};stop-opacity:1" />
+                <stop offset="100%" style="stop-color:${accentColor};stop-opacity:1" />
+            </linearGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#bgGradient)"/>
+        ${textElements}
+    </svg>`;
+}
+
+function escapeXml(unsafe) {
+    return unsafe.replace(/[<>&'"]/g, function (c) {
+        switch (c) {
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '&': return '&amp;';
+            case '\'': return '&apos;';
+            case '"': return '&quot;';
+        }
+    });
+}
+
+// ============ DOWNLOAD FUNCTIONS ============
+function downloadSvg() {
+    const text = currentText.trim();
+
+    if (!text) {
+        showNotification("Please enter characters first", "warning");
+        return;
+    }
+
+    try {
+        const svg = createSVG(text);
+        const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+        const filename = generateFilename(text, "svg");
+        downloadFile(blob, filename);
+        showNotification("✓ SVG downloaded successfully!", "success");
+    } catch (error) {
+        console.error("SVG download error:", error);
+        showNotification("Failed to download SVG", "error");
+    }
+}
+
+function downloadPng() {
+    const text = currentText.trim();
+
+    if (!text) {
+        showNotification("Please enter characters first", "warning");
+        return;
+    }
+
+    try {
+        const resolution = parseInt(pngResolutionSelect.value) || 2;
+        const svg = createSVG(text);
+        const img = new Image();
+        const canvas = document.createElement("canvas");
+
+        const lines = text.split("\n").filter(line => line.trim());
+        const charWidth = 150;
+        const spaceWidth = 40;
+        const lineHeight = 200;
+        const padding = 30;
+
+        // Calculate dimensions
+        let maxLineWidth = padding * 2;
+        lines.forEach(line => {
+            let lineWidth = padding * 2;
+            line.split("").forEach(char => {
+                lineWidth += (char === ' ') ? spaceWidth : charWidth;
+            });
+            maxLineWidth = Math.max(maxLineWidth, lineWidth);
+        });
+
+        const baseWidth = maxLineWidth;
+        const baseHeight = lines.length * lineHeight + padding * 2;
+
+        canvas.width = baseWidth * resolution;
+        canvas.height = baseHeight * resolution;
+
+        const ctx = canvas.getContext("2d");
+        ctx.scale(resolution, resolution);
+
+        img.onload = () => {
+            ctx.drawImage(img, 0, 0, baseWidth, baseHeight);
+            canvas.toBlob((blob) => {
+                const filename = generateFilename(text, "png");
+                downloadFile(blob, filename);
+                showNotification(`✓ PNG downloaded at ${resolution}x resolution!`, "success");
+            }, "image/png");
+        };
+
+        img.onerror = () => {
+            showNotification("Failed to generate PNG", "error");
+        };
+
+        const svgBlob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+        img.src = URL.createObjectURL(svgBlob);
+    } catch (error) {
+        console.error("PNG download error:", error);
+        showNotification("Failed to download PNG", "error");
+    }
+}
+
+// ============ UTILITY FUNCTIONS ============
+function generateFilename(text, format) {
+    const cleanText = text
+        .replace(/\n/g, "_")
+        .replace(/\s+/g, "_")
+        .substring(0, 30);
+
+    const timestamp = new Date().toISOString().slice(0, 10);
+    return `calligraphy_${cleanText}_${timestamp}.${format}`;
+}
+
+function downloadFile(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+// ============ NOTIFICATION SYSTEM ============
+function showNotification(message, type = "info") {
+    const notification = document.createElement("div");
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+
+    notificationContainer.appendChild(notification);
 
     setTimeout(() => {
-        elements.notification.classList.remove('show');
+        notification.style.animation = "slideOut 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
+        setTimeout(() => notification.remove(), 400);
     }, 3000);
 }
 
-// Download as SVG
-function downloadSVG() {
-    const { text, fontFamily, fontSize, textColor, bgColor, isBold, isItalic, isUnderline, textAlign } = state;
-
-    if (!text.trim()) {
-        showNotification('Please enter some text first!', 'error');
-        return;
+// ============ KEYBOARD SHORTCUTS ============
+document.addEventListener("keydown", (e) => {
+    // Ctrl/Cmd + Enter to animate
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        e.preventDefault();
+        animateCharacters();
     }
 
-    try {
-        const lines = text.split('\n');
-        const lineHeight = fontSize * 1.4;
-        const padding = 60;
-
-        // Calculate approximate width based on text content
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const fontWeight = isBold ? 'bold' : 'normal';
-        const fontStyle = isItalic ? 'italic' : 'normal';
-        ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
-
-        const maxLineWidth = Math.max(...lines.map(line => ctx.measureText(line).width));
-        const width = Math.max(800, maxLineWidth + (padding * 2));
-        const height = Math.max(400, (lines.length * lineHeight) + (padding * 2));
-
-        const textDecoration = isUnderline ? 'underline' : 'none';
-
-        let textAnchor = 'middle';
-        let xPos = width / 2;
-        if (textAlign === 'left') {
-            textAnchor = 'start';
-            xPos = padding;
-        } else if (textAlign === 'right') {
-            textAnchor = 'end';
-            xPos = width - padding;
-        }
-
-        let svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
-            <rect width="100%" height="100%" fill="${bgColor}"/>
-            <text x="${xPos}" y="${padding + fontSize}" 
-                  font-family="${fontFamily}" 
-                  font-size="${fontSize}" 
-                  fill="${textColor}"
-                  font-weight="${fontWeight}"
-                  font-style="${fontStyle}"
-                  text-decoration="${textDecoration}"
-                  text-anchor="${textAnchor}">`;
-
-        lines.forEach((line, index) => {
-            svgContent += `<tspan x="${xPos}" dy="${index === 0 ? 0 : lineHeight}">${escapeHtml(line)}</tspan>`;
-        });
-
-        svgContent += `</text></svg>`;
-
-        const blob = new Blob([svgContent], { type: 'image/svg+xml' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `text-image-${Date.now()}.svg`;
-        link.click();
-        URL.revokeObjectURL(url);
-
-        showNotification('SVG downloaded successfully!', 'success');
-    } catch (error) {
-        showNotification('Error generating SVG. Please try again.', 'error');
-        console.error('SVG generation error:', error);
+    // Escape to reset
+    if (e.key === "Escape") {
+        resetCanvas();
     }
-}
+});
 
-// Download as PNG
-function downloadPNG() {
-    const { text, fontFamily, fontSize, textColor, bgColor, isBold, isItalic, isUnderline, textAlign, resolution } = state;
+// ============ INITIALIZATION ============
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("Chinese Calligraphy Studio initialized");
 
-    if (!text.trim()) {
-        showNotification('Please enter some text first!', 'error');
-        return;
-    }
+    initializeTheme();
 
-    try {
-        let width, height;
+    // Set example text
+    input.value = "春眠不覺曉\n處處聞啼鳥\n夜來風雨聲\n花落知多少";
 
-        if (resolution === 'custom') {
-            width = state.customWidth;
-            height = state.customHeight;
-        } else {
-            [width, height] = resolution.split('x').map(Number);
-        }
-
-        if (!width || !height || width < 100 || height < 100) {
-            showNotification('Invalid dimensions. Please check your resolution settings.', 'error');
-            return;
-        }
-
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-
-        // Fill background
-        ctx.fillStyle = bgColor;
-        ctx.fillRect(0, 0, width, height);
-
-        // Set text properties
-        const fontWeight = isBold ? 'bold' : 'normal';
-        const fontStyle = isItalic ? 'italic' : 'normal';
-        ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
-        ctx.fillStyle = textColor;
-
-        // Calculate text position and handle line wrapping
-        const lineHeight = fontSize * 1.4;
-        const padding = Math.max(60, width * 0.05); // 5% padding or minimum 60px
-        const maxWidth = width - (padding * 2);
-
-        // Word wrap function
-        const wrapText = (line) => {
-            if (!line.trim()) return [''];
-
-            const words = line.split(' ');
-            const wrappedLines = [];
-            let currentLine = '';
-
-            words.forEach(word => {
-                const testLine = currentLine ? currentLine + ' ' + word : word;
-                const metrics = ctx.measureText(testLine);
-
-                if (metrics.width > maxWidth && currentLine) {
-                    wrappedLines.push(currentLine);
-                    currentLine = word;
-                } else {
-                    currentLine = testLine;
-                }
-            });
-
-            if (currentLine) {
-                wrappedLines.push(currentLine);
-            }
-
-            return wrappedLines.length > 0 ? wrappedLines : [''];
-        };
-
-        // Process all lines with wrapping
-        const allWrappedLines = [];
-        const lines = text.split('\n');
-        lines.forEach(line => {
-            allWrappedLines.push(...wrapText(line));
-        });
-
-        // Calculate vertical centering
-        const totalTextHeight = allWrappedLines.length * lineHeight;
-        let startY = (height - totalTextHeight) / 2 + fontSize;
-
-        // Draw each line
-        allWrappedLines.forEach((line, index) => {
-            const yPos = startY + (index * lineHeight);
-
-            // Only draw if within canvas bounds
-            if (yPos >= fontSize && yPos <= height - fontSize) {
-                let xPos;
-
-                // Set alignment and x position
-                if (textAlign === 'center') {
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'alphabetic';
-                    xPos = width / 2;
-                } else if (textAlign === 'right') {
-                    ctx.textAlign = 'right';
-                    ctx.textBaseline = 'alphabetic';
-                    xPos = width - padding;
-                } else {
-                    ctx.textAlign = 'left';
-                    ctx.textBaseline = 'alphabetic';
-                    xPos = padding;
-                }
-
-                // Draw text
-                ctx.fillText(line, xPos, yPos);
-
-                // Draw underline if needed
-                if (isUnderline && line.trim()) {
-                    const metrics = ctx.measureText(line);
-                    const textWidth = metrics.width;
-                    let underlineX = xPos;
-
-                    if (textAlign === 'center') {
-                        underlineX = xPos - textWidth / 2;
-                    } else if (textAlign === 'right') {
-                        underlineX = xPos - textWidth;
-                    }
-
-                    const underlineY = yPos + fontSize * 0.1;
-                    const underlineThickness = Math.max(2, fontSize / 20);
-
-                    ctx.beginPath();
-                    ctx.moveTo(underlineX, underlineY);
-                    ctx.lineTo(underlineX + textWidth, underlineY);
-                    ctx.strokeStyle = textColor;
-                    ctx.lineWidth = underlineThickness;
-                    ctx.stroke();
-                }
-            }
-        });
-
-        canvas.toBlob((blob) => {
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `text-image-${width}x${height}-${Date.now()}.png`;
-            link.click();
-            URL.revokeObjectURL(url);
-
-            showNotification('PNG downloaded successfully!', 'success');
-        }, 'image/png');
-
-    } catch (error) {
-        showNotification('Error generating PNG. Please try again.', 'error');
-        console.error('PNG generation error:', error);
-    }
-}
-
-// Initialize on page load
-init();
+    // Trigger initial load
+    const event = new Event("input", { bubbles: true });
+    input.dispatchEvent(event);
+});

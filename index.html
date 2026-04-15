@@ -4,147 +4,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text to Image Converter</title>
+    <title>Chinese Calligraphy Studio</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>Text to Image Converter</h1>
-            <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
-                <span class="icon">🌙</span>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="logo">書</div>
+                <div class="header-info">
+                    <h1>Chinese Calligraphy Studio</h1>
+                    <p>Master Chinese character writing with interactive stroke animation</p>
+                </div>
+            </div>
+            <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg class="moon-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
             </button>
-        </header>
-
-        <div class="main-grid">
-            <!-- Left Panel: Input & Formatting -->
-            <div class="left-panel">
-                <div class="input-section">
-                    <label for="textInput">Enter Your Text:</label>
-                    <textarea id="textInput" placeholder="Type your text here..." rows="6"></textarea>
-                </div>
-
-                <div class="formatting-section">
-                    <h3>Formatting Options</h3>
-
-                    <div class="format-group">
-                        <label for="fontFamily">Font Family:</label>
-                        <select id="fontFamily">
-                            <optgroup label="Chinese Fonts">
-                                <option value="SimSun, 宋体">SimSun (宋体) - Song/Ming Style</option>
-                                <option value="SimHei, 黑体">SimHei (黑体) - Gothic/Hei Style</option>
-                                <option value="Microsoft YaHei, 微软雅黑">Microsoft YaHei (微软雅黑)</option>
-                                <option value="KaiTi, 楷体">KaiTi (楷体) - Regular Script</option>
-                                <option value="FangSong, 仿宋">FangSong (仿宋) - Imitation Song</option>
-                                <option value="STSong, 华文宋体">STSong (华文宋体) - Chinese Song</option>
-                                <option value="STHeiti, 华文黑体">STHeiti (华文黑体) - Chinese Hei</option>
-                                <option value="STKaiti, 华文楷体">STKaiti (华文楷体) - Chinese Kai</option>
-                                <option value="STFangsong, 华文仿宋">STFangsong (华文仿宋) - Chinese Fang</option>
-                                <option value="LiSu, 隶书">LiSu (隶书) - Clerical Script</option>
-                                <option value="YouYuan, 幼圆">YouYuan (幼圆) - Child Round</option>
-                                <option value="PMingLiU, 新細明體">PMingLiU (新細明體) - Taiwan Ming</option>
-                                <option value="MingLiU, 細明體">MingLiU (細明體) - Ming</option>
-                                <option value="DFKai-SB, 標楷體">DFKai-SB (標楷體) - Taiwan Kai</option>
-                                <option value="NSimSun, 新宋体">NSimSun (新宋体) - New Song</option>
-                            </optgroup>
-                            <optgroup label="English Fonts">
-                                <option value="Arial">Arial</option>
-                                <option value="Times New Roman">Times New Roman</option>
-                                <option value="Courier New">Courier New</option>
-                                <option value="Georgia">Georgia</option>
-                                <option value="Verdana">Verdana</option>
-                                <option value="Comic Sans MS">Comic Sans MS</option>
-                                <option value="Impact">Impact</option>
-                                <option value="Trebuchet MS">Trebuchet MS</option>
-                            </optgroup>
-                        </select>
-                    </div>
-
-                    <div class="format-row">
-                        <div class="format-group">
-                            <label for="fontSize">Font Size (px):</label>
-                            <input type="number" id="fontSize" value="48" min="12" max="200">
-                        </div>
-
-                        <div class="format-group">
-                            <label for="textAlign">Alignment:</label>
-                            <select id="textAlign">
-                                <option value="left">Left</option>
-                                <option value="center" selected>Center</option>
-                                <option value="right">Right</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="format-row">
-                        <div class="format-group">
-                            <label for="textColor">Text Color:</label>
-                            <input type="color" id="textColor" value="#000000">
-                        </div>
-
-                        <div class="format-group">
-                            <label for="bgColor">Background:</label>
-                            <input type="color" id="bgColor" value="#ffffff">
-                        </div>
-                    </div>
-
-                    <div class="style-buttons">
-                        <button id="boldBtn" class="style-btn" title="Bold">
-                            <strong>B</strong>
-                        </button>
-                        <button id="italicBtn" class="style-btn" title="Italic">
-                            <em>I</em>
-                        </button>
-                        <button id="underlineBtn" class="style-btn" title="Underline">
-                            <u>U</u>
-                        </button>
-                    </div>
-
-                    <div class="format-group png-only">
-                        <label for="resolution">PNG Resolution:</label>
-                        <select id="resolution">
-                            <option value="1920x1080">1K (1920x1080)</option>
-                            <option value="2560x1440">2K (2560x1440)</option>
-                            <option value="3840x2160" selected>4K (3840x2160)</option>
-                            <option value="7680x4320">8K (7680x4320)</option>
-                            <option value="custom">Custom</option>
-                        </select>
-                    </div>
-
-                    <div id="customDimensions" class="custom-dimensions" style="display: none;">
-                        <div class="format-group">
-                            <label for="customWidth">Width (px):</label>
-                            <input type="number" id="customWidth" value="1920" min="100" max="10000">
-                        </div>
-                        <div class="format-group">
-                            <label for="customHeight">Height (px):</label>
-                            <input type="number" id="customHeight" value="1080" min="100" max="10000">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="download-section">
-                    <button id="downloadSVG" class="download-btn svg-btn">
-                        <span>📄</span> Download SVG
-                    </button>
-                    <button id="downloadPNG" class="download-btn png-btn">
-                        <span>🖼️</span> Download PNG
-                    </button>
-                </div>
-            </div>
-
-            <!-- Right Panel: Preview -->
-            <div class="right-panel">
-                <div class="preview-section">
-                    <h3>Live Preview</h3>
-                    <div id="preview" class="preview-box"></div>
-                </div>
-            </div>
         </div>
-    </div>
+    </header>
 
-    <div id="notification" class="notification"></div>
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Left Panel - Input Controls -->
+        <aside class="sidebar">
+            <!-- Input Section -->
+            <section class="control-section">
+                <h2 class="section-title">Text Input</h2>
+                <div class="input-group">
+                    <label for="userInput" class="input-label">Paste your Chinese text here</label>
+                    <textarea id="userInput" class="input-textarea"
+                        placeholder="Enter Chinese characters, poems, or text...&#10;&#10;Example:&#10;春眠不覺曉&#10;處處聞啼鳥&#10;夜來風雨聲&#10;花落知多少"
+                        spellcheck="false"></textarea>
+                    <div class="input-meta">
+                        <span class="char-count"><strong id="charCount">0</strong> characters</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Preview Section -->
+            <section class="control-section">
+                <h2 class="section-title">Live Preview</h2>
+                <div class="preview-box" id="result">
+                    Enter text to begin
+                </div>
+            </section>
+
+            <!-- Animation Section -->
+            <section class="control-section">
+                <h2 class="section-title">Stroke Animation</h2>
+                <button class="btn btn-primary" onclick="animateCharacters()">
+                    <span class="btn-icon">▶</span>
+                    <span>Start Animation</span>
+                </button>
+                <button class="btn btn-secondary" onclick="resetCanvas()">
+                    <span class="btn-icon">⟲</span>
+                    <span>Reset Canvas</span>
+                </button>
+            </section>
+
+            <!-- Export Section -->
+            <section class="control-section">
+                <h2 class="section-title">Export</h2>
+                <div class="export-group">
+                    <button class="btn btn-secondary" onclick="downloadSvg()">
+                        <span class="btn-icon">⬇</span>
+                        <span>SVG</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadPng()">
+                        <span class="btn-icon">⬇</span>
+                        <span>PNG</span>
+                    </button>
+                </div>
+                <div class="resolution-group">
+                    <label for="pngResolution" class="small-label">PNG Quality</label>
+                    <select id="pngResolution" class="resolution-select">
+                        <option value="1">Standard (1x)</option>
+                        <option value="2" selected>High (2x)</option>
+                        <option value="3">Ultra (3x)</option>
+                        <option value="4">Maximum (4x)</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Info Section -->
+            <section class="control-section info-section">
+                <h3 class="info-title">Quick Tips</h3>
+                <ul class="tips-list">
+                    <li><strong>Ctrl/Cmd + Enter</strong> to animate</li>
+                    <li><strong>Esc</strong> to reset</li>
+                    <li>Font: SimSun (authentic calligraphy)</li>
+                    <li>Supports traditional & simplified characters</li>
+                </ul>
+            </section>
+        </aside>
+
+        <!-- Right Panel - Canvas Display -->
+        <section class="canvas-area">
+            <div class="canvas-header">
+                <div>
+                    <h2>Animation Preview</h2>
+                    <p class="subtitle">Watch strokes animate in proper calligraphic order</p>
+                </div>
+            </div>
+
+            <div class="canvas-content">
+                <div id="character-target-div" class="character-grid"></div>
+            </div>
+
+            <div class="canvas-footer">
+                <p>Powered by HanziWriter | Press Play to start the animation</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="notification-container"></div>
 
     <script src="script.js"></script>
 </body>
