@@ -4,76 +4,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text to Image Tool</title>
+    <title>Text to Image Converter</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="container">
         <header>
-            <h1>Text to Image Tool</h1>
+            <h1>Text to Image Converter</h1>
             <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
                 <span class="icon">🌙</span>
             </button>
         </header>
 
         <div class="main-grid">
+            <!-- Left Panel: Input & Formatting -->
             <div class="left-panel">
                 <div class="input-section">
-                    <label for="textInput">Enter text:</label>
+                    <label for="textInput">Enter Your Text:</label>
                     <textarea id="textInput" placeholder="Type your text here..." rows="6"></textarea>
                 </div>
 
                 <div class="formatting-section">
-                    <h3>Format Options</h3>
+                    <h3>Formatting Options</h3>
 
                     <div class="format-group">
-                        <label for="fontFamily">Font:</label>
+                        <label for="fontFamily">Font Family:</label>
                         <select id="fontFamily">
-                            <optgroup label="Song / Serif">
-                                <option value="SimSun, 宋体">SimSun（宋体）</option>
-                                <option value="NSimSun, 新宋体">NSimSun（新宋体）</option>
-                                <option value="STSong, 华文宋体">STSong（华文宋体）</option>
-                                <option value="STZhongsong, 华文中宋">STZhongsong（华文中宋）</option>
-                                <option value="PMingLiU, 新細明體">PMingLiU（新細明體）</option>
-                                <option value="MingLiU, 細明體">MingLiU（細明體）</option>
-                                <option value="Source Han Serif SC, 思源宋体">Source Han Serif SC</option>
-                                <option value="Noto Serif SC">Noto Serif SC</option>
+                            <optgroup label="Chinese Fonts">
+                                <option value="SimSun, 宋体">SimSun (宋体) - Song/Ming Style</option>
+                                <option value="SimHei, 黑体">SimHei (黑体) - Gothic/Hei Style</option>
+                                <option value="Microsoft YaHei, 微软雅黑">Microsoft YaHei (微软雅黑)</option>
+                                <option value="KaiTi, 楷体">KaiTi (楷体) - Regular Script</option>
+                                <option value="FangSong, 仿宋">FangSong (仿宋) - Imitation Song</option>
+                                <option value="STSong, 华文宋体">STSong (华文宋体) - Chinese Song</option>
+                                <option value="STHeiti, 华文黑体">STHeiti (华文黑体) - Chinese Hei</option>
+                                <option value="STKaiti, 华文楷体">STKaiti (华文楷体) - Chinese Kai</option>
+                                <option value="STFangsong, 华文仿宋">STFangsong (华文仿宋) - Chinese Fang</option>
+                                <option value="LiSu, 隶书">LiSu (隶书) - Clerical Script</option>
+                                <option value="YouYuan, 幼圆">YouYuan (幼圆) - Child Round</option>
+                                <option value="PMingLiU, 新細明體">PMingLiU (新細明體) - Taiwan Ming</option>
+                                <option value="MingLiU, 細明體">MingLiU (細明體) - Ming</option>
+                                <option value="DFKai-SB, 標楷體">DFKai-SB (標楷體) - Taiwan Kai</option>
+                                <option value="NSimSun, 新宋体">NSimSun (新宋体) - New Song</option>
                             </optgroup>
-                            <optgroup label="Hei / Sans-Serif">
-                                <option value="SimHei, 黑体">SimHei（黑体）</option>
-                                <option value="Microsoft YaHei, 微软雅黑" selected>Microsoft YaHei（微软雅黑）</option>
-                                <option value="Microsoft JhengHei, 微軟正黑體">Microsoft JhengHei（微軟正黑體）</option>
-                                <option value="STHeiti, 华文黑体">STHeiti（华文黑体）</option>
-                                <option value="STXihei, 华文细黑">STXihei（华文细黑）</option>
-                                <option value="PingFang SC">PingFang SC</option>
-                                <option value="PingFang TC">PingFang TC</option>
-                                <option value="Source Han Sans SC, 思源黑体">Source Han Sans SC</option>
-                                <option value="Noto Sans SC">Noto Sans SC</option>
-                            </optgroup>
-                            <optgroup label="Kai / Calligraphic">
-                                <option value="KaiTi, 楷体">KaiTi（楷体）</option>
-                                <option value="STKaiti, 华文楷体">STKaiti（华文楷体）</option>
-                                <option value="DFKai-SB, 標楷體">DFKai-SB（標楷體）</option>
-                                <option value="STXingkai, 华文行楷">STXingkai（华文行楷）</option>
-                            </optgroup>
-                            <optgroup label="FangSong / Transitional">
-                                <option value="FangSong, 仿宋">FangSong（仿宋）</option>
-                                <option value="STFangsong, 华文仿宋">STFangsong（华文仿宋）</option>
-                            </optgroup>
-                            <optgroup label="Li Shu / Decorative">
-                                <option value="LiSu, 隶书">LiSu（隶书）</option>
-                                <option value="STLiti, 华文隶书">STLiti（华文隶书）</option>
-                                <option value="STCaiyun, 华文彩云">STCaiyun（华文彩云）</option>
-                                <option value="STHupo, 华文琥珀">STHupo（华文琥珀）</option>
-                                <option value="FZShuTi, 方正舒体">FZShuTi（方正舒体）</option>
-                                <option value="FZYaoti, 方正姚体">FZYaoti（方正姚体）</option>
-                            </optgroup>
-                            <optgroup label="Round / Other">
-                                <option value="YouYuan, 幼圆">YouYuan（幼圆）</option>
-                                <option value="Source Han Serif TC, 思源宋體">Source Han Serif TC</option>
-                                <option value="Noto Serif TC">Noto Serif TC</option>
-                                <option value="Noto Sans TC">Noto Sans TC</option>
+                            <optgroup label="English Fonts">
+                                <option value="Arial">Arial</option>
+                                <option value="Times New Roman">Times New Roman</option>
+                                <option value="Courier New">Courier New</option>
+                                <option value="Georgia">Georgia</option>
+                                <option value="Verdana">Verdana</option>
+                                <option value="Comic Sans MS">Comic Sans MS</option>
+                                <option value="Impact">Impact</option>
+                                <option value="Trebuchet MS">Trebuchet MS</option>
                             </optgroup>
                         </select>
                     </div>
@@ -81,10 +64,11 @@
                     <div class="format-row">
                         <div class="format-group">
                             <label for="fontSize">Font Size (px):</label>
-                            <input type="number" id="fontSize" value="480" min="12" max="3200">
+                            <input type="number" id="fontSize" value="48" min="12" max="200">
                         </div>
+
                         <div class="format-group">
-                            <label for="textAlign">Horizontal Align:</label>
+                            <label for="textAlign">Alignment:</label>
                             <select id="textAlign">
                                 <option value="left">Left</option>
                                 <option value="center" selected>Center</option>
@@ -95,42 +79,49 @@
 
                     <div class="format-row">
                         <div class="format-group">
-                            <label for="verticalAlign">Vertical Align:</label>
-                            <select id="verticalAlign">
-                                <option value="top">Top</option>
-                                <option value="center" selected>Center</option>
-                                <option value="bottom">Bottom</option>
-                            </select>
-                        </div>
-                        <div class="format-group">
-                            <label for="resolution">PNG Resolution:</label>
-                            <select id="resolution">
-                                <option value="1920x1080">1K (1920×1080)</option>
-                                <option value="2560x1440">2K (2560×1440)</option>
-                                <option value="3840x2160" selected>4K (3840×2160)</option>
-                                <option value="7680x4320">8K (7680×4320)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="format-row">
-                        <div class="format-group">
                             <label for="textColor">Text Color:</label>
                             <input type="color" id="textColor" value="#000000">
                         </div>
+
                         <div class="format-group">
-                            <label for="bgColor">Background Color:</label>
+                            <label for="bgColor">Background:</label>
                             <input type="color" id="bgColor" value="#ffffff">
                         </div>
                     </div>
 
                     <div class="style-buttons">
-                        <button id="boldBtn" class="style-btn" title="Bold"><strong>B</strong></button>
-                        <button id="italicBtn" class="style-btn" title="Italic"><em>I</em></button>
-                        <button id="underlineBtn" class="style-btn" title="Underline"><u>U</u></button>
+                        <button id="boldBtn" class="style-btn" title="Bold">
+                            <strong>B</strong>
+                        </button>
+                        <button id="italicBtn" class="style-btn" title="Italic">
+                            <em>I</em>
+                        </button>
+                        <button id="underlineBtn" class="style-btn" title="Underline">
+                            <u>U</u>
+                        </button>
                     </div>
 
-                    <div class="resolution-hint" id="resolutionHint"></div>
+                    <div class="format-group png-only">
+                        <label for="resolution">PNG Resolution:</label>
+                        <select id="resolution">
+                            <option value="1920x1080">1K (1920x1080)</option>
+                            <option value="2560x1440">2K (2560x1440)</option>
+                            <option value="3840x2160" selected>4K (3840x2160)</option>
+                            <option value="7680x4320">8K (7680x4320)</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+
+                    <div id="customDimensions" class="custom-dimensions" style="display: none;">
+                        <div class="format-group">
+                            <label for="customWidth">Width (px):</label>
+                            <input type="number" id="customWidth" value="1920" min="100" max="10000">
+                        </div>
+                        <div class="format-group">
+                            <label for="customHeight">Height (px):</label>
+                            <input type="number" id="customHeight" value="1080" min="100" max="10000">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="download-section">
@@ -143,6 +134,7 @@
                 </div>
             </div>
 
+            <!-- Right Panel: Preview -->
             <div class="right-panel">
                 <div class="preview-section">
                     <h3>Live Preview</h3>

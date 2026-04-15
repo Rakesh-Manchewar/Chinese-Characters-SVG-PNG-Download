@@ -361,15 +361,3 @@ input[type="color"] {
         flex-wrap: wrap;
     }
 }
-/* Resolution hint */
-.resolution-hint {
-    margin-top: -10px;
-    margin-bottom: 10px;
-    font-size: 0.85rem;
-    color: var(--accent-primary);
-    font-weight: 500;
-    padding: 8px 12px;
-    background: var(--bg-secondary);
-    border-radius: 6px;
-    border-left: 3px solid var(--accent-primary);
-}
